@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate AI Trading System</title>
+  <meta name="description" content="Private AI trading system with real-time prediction, sentiment analysis and high-frequency motion detection." />
+  <style>
+    :root{
+      --bg:#05070b;
+      --panel:rgba(8,10,16,.74);
+      --panel-2:rgba(13,17,26,.84);
+      --text:#f7f9ff;
+      --muted:#b4bfd8;
+      --gold:#d4af67;
+      --gold2:#f0d799;
+      --blue:#59a6ff;
+      --pink:#ff5c9c;
+      --border:rgba(255,255,255,.12);
+      --shadow:0 24px 70px rgba(0,0,0,.38);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(89,166,255,.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,92,156,.10), transparent 24%),
+        linear-gradient(180deg,#020306 0%,#0a0f18 100%);
+      color:var(--text);
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1180px,calc(100vw - 32px));margin:0 auto}
+
+    .hero{
+      position:relative;
+      width:100%;
+      /* Ratio 16:9 responsive */
+      padding-top:56.25%;
+      overflow:hidden;
+    }
+
+    /* Sur mobile portrait: plus de hauteur pour voir le texte */
+    @media(max-width:768px){
+      .hero{ padding-top:100%; }
+    }
+    @media(max-width:480px){
+      .hero{ padding-top:140%; }
+    }
+
+    .hero video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter:brightness(1.02) contrast(1.05) saturate(1.08);
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at center, transparent 35%, rgba(0,0,0,.18) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.20) 35%, rgba(0,0,0,.84) 100%);
+    }
+
+    /* Nav et contenu restent en position absolue comme avant */
+
+    .nav{
+      position:absolute; top:18px; left:0; right:0; z-index:6;
+    }
+
+    .nav-inner{
+      width:min(1180px,calc(100vw - 32px));
+      margin:0 auto;
+      display:flex; justify-content:space-between; align-items:center; gap:16px;
+    }
+
+    .brand, .nav-cta, .stat-pill{
+      backdrop-filter:blur(10px);
+      background:rgba(7,10,16,.48);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+
+    .brand{
+      padding:11px 16px;
+      border-radius:999px;
+      font-size:.86rem;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      color:#f3dcaa;
+    }
+
+    .nav-actions{
+      display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    .nav-cta{
+      padding:11px 16px;
+      border-radius:999px;
+      font-size:.84rem;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      color:#eef3ff;
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:5;
+      width:min(1180px,calc(100vw - 32px));
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:28px;
+      align-items:end;
+      padding:120px 0 52px;
+    }
+
+    @media(max-width:768px){
+      .hero-content{
+        padding-top:80px;
+        padding-bottom:40px;
+      }
+      .hero-copy h1{
+        font-size:clamp(1.6rem,6vw,3rem) !important;
+      }
+    }
+
+    .hero-copy{
+      max-width:760px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 15px;
+      border-radius:999px;
+      background:rgba(212,175,103,.16);
+      border:1px solid rgba(240,215,153,.28);
+      color:#f7e6b7;
+      font-size:.82rem;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      margin-bottom:18px;
+      box-shadow:0 0 18px rgba(212,175,103,.12);
+    }
+
+    .hero h1{
+      margin:0 0 18px;
+      font-size:clamp(2.2rem,5vw,5.4rem);
+      line-height:1.02;
+      text-transform:uppercase;
+      font-weight:900;
+      letter-spacing:.3px;
+      text-shadow:0 10px 34px rgba(0,0,0,.56);
+    }
+
+    .gold{
+      background:linear-gradient(135deg,#fff7df 0%, var(--gold2) 38%, var(--gold) 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero p{
+      margin:0 0 24px;
+      max-width:720px;
+      font-size:1.08rem;
+      line-height:1.65;
+      color:rgba(255,255,255,.93);
+      text-shadow:0 5px 18px rgba(0,0,0,.45);
+      white-space:pre-line;
+    }
+
+    .cta-row{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:20px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:16px 24px;
+      border-radius:18px;
+      font-weight:900;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      border:1px solid transparent;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor:pointer;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      background:linear-gradient(135deg,#fff2c7 0%, var(--gold2) 35%, var(--gold) 100%);
+      color:#111;
+      box-shadow:0 18px 40px rgba(0,0,0,.28), 0 0 28px rgba(212,175,103,.45);
+    }
+
+    .btn-secondary{
+      background:rgba(7,10,16,.62);
+      color:#fff;
+      border-color:var(--border);
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card{
+      padding:22px;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(7,10,16,.52) 0%, rgba(7,10,16,.76) 100%);
+      border:1px solid rgba(240,215,153,.20);
+      box-shadow:0 28px 80px rgba(0,0,0,.42), 0 0 45px rgba(212,175,103,.10);
+      backdrop-filter:blur(14px);
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:1rem;
+      color:#f3dcaa;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+    }
+
+    .price{
+      font-size:3rem;
+      font-weight:900;
+      line-height:1;
+      margin:8px 0 14px;
+    }
+
+    .hero-list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .audio-bar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:18px;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .section{
+      padding:72px 0;
+    }
+
+    .section-title{
+      margin:0 0 12px;
+      font-size:clamp(1.8rem,3vw,3rem);
+      line-height:1.08;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+
+    .section-sub{
+      margin:0 0 28px;
+      color:var(--muted);
+      line-height:1.6;
+      max-width:760px;
+      font-size:1rem;
+    }
+
+    .grid{
+      display:grid;
+      gap:18px;
+    }
+
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+    .card{
+      padding:22px;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(12,16,24,.76) 0%, rgba(9,12,20,.90) 100%);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+
+    .card h3{
+      margin:0 0 10px;
+      font-size:1rem;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      color:#f3dcaa;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    .markets{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .market-pill{
+      padding:12px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      font-weight:700;
+      letter-spacing:.4px;
+    }
+
+    .payment-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .payment-item{
+      padding:16px 18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      overflow-wrap:anywhere;
+    }
+
+    .payment-label{
+      display:block;
+      margin-bottom:6px;
+      color:#f6e4b1;
+      font-size:.82rem;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .payment-value{
+      color:rgba(255,255,255,.95);
+      line-height:1.55;
+      font-size:.98rem;
+    }
+
+    .contact-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .contact-box{
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .contact-box strong{
+      display:block;
+      margin-bottom:8px;
+      color:#f6e4b1;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      font-size:.84rem;
+    }
+
+    .footer{
+      padding:28px 0 46px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .mini{
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    @media (max-width:980px){
+      .hero-content, .grid-3, .grid-2, .payment-grid, .contact-row{
+        grid-template-columns:1fr;
+      }
+      .hero{
+        min-height:auto;
+      }
+      .hero-content{
+        padding-top:110px;
+      }
+    }
+
+    @media (max-width:640px){
+      .container, .nav-inner, .hero-content{width:min(100vw - 20px, 1180px)}
+      .cta-row{flex-direction:column;align-items:stretch}
+      .btn{width:100%}
+      .hero p{font-size:.98rem}
+      .price{font-size:2.4rem}
+      .top-right{display:none}
+    }
+  
+
+    /* ===== ULTIMATE CONVERSION MODE ===== */
+    .cinema-wrapper{
+      position:relative;
+      margin-top:34px;
+      border-radius:28px;
+      overflow:hidden;
+    }
+
+    .cinema-glow{
+      position:absolute;
+      inset:-4px;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(89,166,255,.38), transparent 36%),
+        radial-gradient(circle at 82% 78%, rgba(255,92,156,.32), transparent 36%),
+        radial-gradient(circle at 50% 50%, rgba(212,175,103,.22), transparent 40%);
+      filter:blur(34px);
+      z-index:0;
+    }
+
+    .cinema-frame{
+      position:relative;
+      z-index:1;
+      overflow:hidden;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#06090f;
+      box-shadow:0 30px 90px rgba(0,0,0,.55), 0 0 45px rgba(89,166,255,.12), 0 0 45px rgba(255,92,156,.10);
+    }
+
+    .cinema-frame iframe{
+      width:100%;
+      aspect-ratio:16/9;
+      border:0;
+      display:block;
+    }
+
+    .cinema-overlay{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(5,7,11,.18) 0%, rgba(5,7,11,.02) 24%, rgba(5,7,11,.52) 100%);
+      padding:18px;
+    }
+
+    .cinema-badge{
+      align-self:flex-start;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(7,10,16,.62);
+      border:1px solid rgba(240,215,153,.22);
+      color:#f6e4b1;
+      font-size:.78rem;
+      letter-spacing:1px;
+      font-weight:800;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+    }
+
+    .cinema-bottom{
+      display:flex;
+      gap:18px;
+      align-items:end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .cinema-copy{
+      max-width:640px;
+      padding:18px 20px;
+      border-radius:20px;
+      background:rgba(7,10,16,.58);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+    }
+
+    .cinema-title{
+      margin:0 0 8px;
+      font-size:1.28rem;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      color:#fff7df;
+    }
+
+    .cinema-sub{
+      margin:0;
+      color:rgba(255,255,255,.9);
+      line-height:1.55;
+      font-size:.98rem;
+    }
+
+    .cinema-cta{
+      pointer-events:auto;
+      border:0;
+      border-radius:18px;
+      padding:16px 22px;
+      font-weight:900;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      cursor:pointer;
+      color:#111;
+      background:linear-gradient(135deg,#fff2c7 0%, var(--gold2) 36%, var(--gold) 100%);
+      box-shadow:0 0 24px rgba(212,175,103,.45), 0 18px 42px rgba(0,0,0,.32);
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+
+    .cinema-cta:hover{transform:translateY(-2px) scale(1.02)}
+
+    .ultimate-conversion-block{
+      margin-top:28px;
+      padding:28px 24px;
+      border-radius:28px;
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(8,10,16,.76) 0%, rgba(11,14,22,.92) 100%);
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 28px 80px rgba(0,0,0,.42);
+    }
+
+    .status-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin-bottom:18px;
+    }
+
+    .status-pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#f8fbff;
+      font-size:.8rem;
+      letter-spacing:.9px;
+      font-weight:800;
+    }
+
+    .update-block{ text-align:center; }
+
+    .update-text{
+      position:relative;
+      font-size:1.34rem;
+      font-weight:900;
+      line-height:1.6;
+      color:#fff;
+      max-width:920px;
+      margin:0 auto 24px;
+      text-shadow:0 0 18px rgba(0,0,0,.72), 0 0 26px rgba(89,166,255,.14), 0 0 26px rgba(255,92,156,.14);
+      animation:fadeUp .95s ease;
+    }
+
+    .scan-line{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(89,166,255,.11) 45%, rgba(255,92,156,.10) 55%, transparent 100%);
+      animation:scanMove 3.4s linear infinite;
+      pointer-events:none;
+    }
+
+    .conversion-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+      margin:20px 0 24px;
+    }
+
+    .conversion-card{
+      text-align:left;
+      padding:20px;
+      border-radius:22px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+
+    .conversion-label{
+      color:#f6e4b1;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-size:.82rem;
+      margin-bottom:12px;
+      font-weight:800;
+    }
+
+    .countdown{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .time-box{
+      min-width:92px;
+      padding:14px 12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      text-align:center;
+    }
+
+    .time-box strong{
+      display:block;
+      font-size:2rem;
+      line-height:1;
+      color:#fff;
+      margin-bottom:6px;
+    }
+
+    .time-box span{
+      color:var(--muted);
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+    }
+
+    .meter-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:#fff;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    .meter-track{
+      width:100%;
+      height:16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:12px;
+    }
+
+    .meter-fill{
+      display:block;
+      width:94%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--blue) 0%, var(--gold2) 55%, var(--pink) 100%);
+      box-shadow:0 0 25px rgba(89,166,255,.35);
+      animation:meterPulse 2.4s ease-in-out infinite;
+    }
+
+    .conversion-note,
+    .micro-proof{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:.96rem;
+    }
+
+    .cta-stack{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+    }
+
+    .update-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px 34px;
+      border-radius:18px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      color:#111;
+      text-decoration:none;
+      background:linear-gradient(135deg,#fff2c7 0%, var(--gold2) 35%, var(--gold) 100%);
+      box-shadow:0 0 24px rgba(212,175,103,.55), 0 18px 40px rgba(0,0,0,.26);
+      animation:pulseGlow 1.9s ease-in-out infinite;
+      transition:transform .2s ease;
+    }
+
+    .update-btn:hover{transform:scale(1.05)}
+
+    .sticky-cta{
+      position:fixed;
+      left:16px;
+      right:16px;
+      bottom:14px;
+      z-index:60;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      border-radius:22px;
+      background:rgba(7,10,16,.82);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 22px 55px rgba(0,0,0,.42);
+      backdrop-filter:blur(14px);
+    }
+
+    .sticky-copy{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .sticky-copy strong{
+      color:#fff7df;
+      font-size:.98rem;
+      letter-spacing:.4px;
+    }
+
+    .sticky-copy span{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .sticky-btn{
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px 18px;
+      border-radius:16px;
+      font-weight:900;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      background:linear-gradient(135deg,#fff2c7 0%, var(--gold2) 35%, var(--gold) 100%);
+      color:#111;
+      box-shadow:0 0 22px rgba(212,175,103,.42);
+    }
+
+    @keyframes scanMove{
+      0%{transform:translateX(-100%)}
+      100%{transform:translateX(100%)}
+    }
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(24px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    @keyframes pulseGlow{
+      0%,100%{box-shadow:0 0 20px rgba(212,175,103,.35), 0 18px 40px rgba(0,0,0,.22)}
+      50%{box-shadow:0 0 36px rgba(212,175,103,.7), 0 22px 50px rgba(0,0,0,.28)}
+    }
+
+    @keyframes meterPulse{
+      0%,100%{filter:saturate(1) brightness(1)}
+      50%{filter:saturate(1.25) brightness(1.12)}
+    }
+
+    @media (max-width:980px){
+      .conversion-grid{grid-template-columns:1fr}
+      .cinema-bottom{flex-direction:column;align-items:stretch}
+      .cinema-cta{width:100%}
+      .sticky-cta{flex-direction:column;align-items:stretch}
+      .sticky-btn{width:100%}
+    }
+
+    @media (max-width:640px){
+      .cinema-overlay{padding:14px}
+      .cinema-copy{padding:14px 16px}
+      .cinema-title{font-size:1.02rem}
+      .cinema-sub{font-size:.92rem}
+      .update-text{font-size:1.08rem}
+      .time-box{min-width:78px;flex:1}
+      .time-box strong{font-size:1.58rem}
+    }
+
+    @media (min-width:768px){
+      .update-text{font-size:1.74rem}
+    }
+
+  
+
+    .email-pro-wrap{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+    .email-link-pro{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      color:#f6e4b1;
+      font-weight:800;
+      text-decoration:none;
+      letter-spacing:.2px;
+      box-shadow:0 0 20px rgba(212,175,103,.12);
+      transition:transform .18s ease, box-shadow .18s ease, color .18s ease;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+    .email-link-pro:hover{
+      transform:translateY(-1px);
+      color:#fff8df;
+      box-shadow:0 0 24px rgba(212,175,103,.24);
+    }
+    .email-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .email-copy-btn{
+      padding:11px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .email-copy-btn:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(89,166,255,.22)}
+    .email-note{font-size:.88rem;color:var(--muted);line-height:1.45}
+
+  
+    .email-pro-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .email-link{
+      color:#f6e4b1;
+      font-weight:800;
+      text-decoration:none;
+      word-break:break-all;
+    }
+    .email-link:hover{
+      color:#ffffff;
+      text-shadow:0 0 10px rgba(212,175,103,.6);
+    }
+    .copy-email-btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .copy-email-btn:hover{transform:translateY(-1px)}
+
+    .email-link-god{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 100%);
+      border:1px solid rgba(240,215,153,.18);
+      box-shadow:0 0 24px rgba(212,175,103,.12), inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    .email-actions-god{display:flex;gap:10px;flex-wrap:wrap}
+    .copy-email-btn-god,.mail-open-btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-height:42px;padding:10px 16px;border-radius:12px;
+      font-weight:800;text-decoration:none;letter-spacing:.4px;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .copy-email-btn-god{
+      background:linear-gradient(135deg, rgba(89,166,255,.18), rgba(255,92,156,.14));
+      box-shadow:0 0 18px rgba(89,166,255,.18);
+    }
+    .mail-open-btn{
+      color:#111;
+      background:linear-gradient(135deg,#fff2c7 0%, var(--gold2) 38%, var(--gold) 100%);
+      box-shadow:0 0 22px rgba(212,175,103,.28);
+    }
+    .copy-email-btn-god:hover,.mail-open-btn:hover{transform:translateY(-1px) scale(1.02)}
+    .email-note-god{font-size:.88rem;color:var(--muted);line-height:1.45}
+    .contact-box.contact-box-god{
+      position:relative;overflow:hidden;
+      background:linear-gradient(180deg, rgba(18,22,34,.82) 0%, rgba(10,13,20,.94) 100%);
+      border:1px solid rgba(240,215,153,.16);
+      box-shadow:0 28px 80px rgba(0,0,0,.34), 0 0 36px rgba(212,175,103,.08);
+    }
+    .contact-box.contact-box-god::after{
+      content:"";position:absolute;inset:auto -30% -55% auto;width:220px;height:220px;border-radius:50%;
+      background:radial-gradient(circle, rgba(89,166,255,.16), transparent 68%);pointer-events:none;
+    }
+    .contact-toast{
+      position:fixed;right:18px;bottom:18px;z-index:50;
+      padding:12px 16px;border-radius:14px;
+      background:rgba(7,10,16,.92);border:1px solid rgba(240,215,153,.22);
+      color:#fff7df;box-shadow:0 20px 60px rgba(0,0,0,.45);
+      transform:translateY(18px);opacity:0;pointer-events:none;
+      transition:opacity .22s ease, transform .22s ease;
+      font-weight:800;letter-spacing:.2px;
+    }
+    .contact-toast.show{opacity:1;transform:translateY(0)}
+
+
+  
+    .hero-title{display:flex;flex-direction:column;gap:14px}
+    .price-badge{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;width:fit-content;padding:10px 16px;border-radius:14px;background:linear-gradient(135deg, rgba(255,92,156,.18), rgba(89,166,255,.22));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 40px rgba(0,0,0,.28),0 0 24px rgba(89,166,255,.14)}
+    .price-old{font-size:.94rem;font-weight:800;color:#ffe5ef;opacity:.95}
+    .price-new{font-size:.94rem;font-weight:900;color:#fff;background:linear-gradient(135deg,#fff2c7,#d4af67);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero::after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(180deg, transparent, rgba(2,3,6,.55));pointer-events:none}
+    @media (max-width: 768px){
+      .nav{top:10px}
+      .brand,.nav-cta{font-size:.74rem;padding:9px 12px}
+      .nav-actions{gap:8px}
+      .hero{padding-top:0;min-height:100svh}
+      .hero video{object-position:center center}
+      .hero-content{padding-top:92px;padding-bottom:28px;gap:18px;align-items:end;min-height:100svh}
+      .hero-copy{max-width:none}
+      .tag{font-size:.72rem;padding:8px 12px;margin-bottom:14px}
+      .hero h1{font-size:clamp(1.7rem,7.2vw,2.6rem)!important;line-height:1.02;margin-bottom:14px}
+      .price-badge{padding:9px 12px;border-radius:12px;gap:8px}
+      .price-old,.price-new{font-size:.82rem}
+      .hero p{font-size:.95rem;line-height:1.55;margin-bottom:18px}
+      .hero-card{padding:18px;border-radius:20px}
+      .price{font-size:2.2rem}
+      .audio-bar{padding:10px 12px;border-radius:14px}
+      .section{padding:52px 0}
+      .section-title{font-size:clamp(1.55rem,7vw,2.25rem)}
+      .section-sub{font-size:.95rem;margin-bottom:22px}
+      .card{padding:18px;border-radius:20px}
+      .markets{gap:10px}
+      .market-pill{padding:10px 12px;font-size:.92rem}
+      .cinema-wrapper{margin-top:26px;border-radius:22px}
+      .cinema-frame{border-radius:18px}
+      .cinema-overlay{padding:14px}
+      .cinema-bottom{flex-direction:column;align-items:stretch;gap:12px}
+      .cinema-title{font-size:1.12rem}
+      .cinema-sub{font-size:.9rem;line-height:1.45}
+      .cinema-cta{width:100%;justify-content:center;padding:14px 16px}
+      .update-block{margin-top:26px}
+      .status-row{gap:8px}
+      .status-pill{font-size:.68rem;padding:8px 10px}
+      .update-text{font-size:1.12rem!important;line-height:1.5}
+      .conversion-grid{gap:12px}
+      .conversion-card{padding:16px;border-radius:18px}
+      .countdown{gap:8px}
+      .time-box{min-width:0;padding:12px 8px}
+      .time-box strong{font-size:1.25rem}
+      .time-box span{font-size:.72rem}
+      .cta-stack .update-btn{width:100%;justify-content:center}
+      .micro-proof{font-size:.84rem}
+      .payment-item,.contact-box{padding:16px}
+      .email-actions-god{flex-direction:column}
+      .copy-btn-god,.mail-open-btn{width:100%;justify-content:center}
+      .contact-toast{right:12px;left:12px;bottom:12px;text-align:center}
+      .floating-cta{left:12px;right:12px;bottom:12px;width:auto;border-radius:18px;padding:12px 14px}
+      .floating-cta-inner{flex-direction:column;align-items:stretch;gap:10px}
+      .floating-cta .update-btn{width:100%;text-align:center;justify-content:center}
+    }
+
+  </style>
+</head>
+<body>
+  <section class="hero" id="top">
+    <video id="bgVideo" autoplay muted loop playsinline preload="auto">
+      <source src="video2741745965.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bgAudio" loop preload="auto">
+      <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="nav">
+      <div class="nav-inner">
+        <div class="brand">Ultimate AI Trading Engine</div>
+        <div class="nav-actions">
+          <a class="nav-cta" href="#features">Features</a>
+          <a class="nav-cta" href="#payment">Payment</a>
+          <a class="nav-cta" href="#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-copy">
+        <div class="tag">Private System • Early Access • AI Trading</div>
+        <h1 class="hero-title"><span><span class="gold">Next-Generation</span> AI Trading Engine</span><span class="price-badge"><span class="price-old">Regular Price $120</span><span class="price-new">60% OFF</span></span></h1>
+        <p>Ultra high-precision trading system powered by advanced AI.
+
+Combining real-time prediction, market sentiment intelligence,
+and high-frequency motion detection for faster decision-making.
+
+Markets covered:
+BTC • ETH • XRP • Volatility Index • Synthetic Deriv
+
+Primary focus:
+EUR/USD</p>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#payment">Get Access Now</a>
+          <button class="btn btn-secondary" id="soundBtn" type="button">Enable Sound</button>
+        </div>
+
+        <div class="audio-bar">
+          <strong>Audio:</strong>
+          <span class="mini" id="audioStatus">Muted by default for autoplay. Click “Enable Sound” to activate music.</span>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h3>Early access</h3>
+        <div class="price">$49</div>
+        <ul class="hero-list">
+          <li>Full system access</li>
+          <li>Continuous updates</li>
+          <li>Improved signal performance</li>
+          <li>Private access code</li>
+          <li>Premium AI engine</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title">Designed to turn fast decisions into profitable execution</h2>
+      <p class="section-sub">This page is optimized for direct hosting. Video and audio are loaded as separate files for better compatibility with GitHub Pages, Netlify, and standard web hosting.</p>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Real-time prediction</h3>
+          <p>Designed to react quickly to market structure changes and price movement shifts.</p>
+        </div>
+        <div class="card">
+          <h3>Market sentiment</h3>
+          <p>Combines directional analysis with sentiment-driven logic for stronger decision context.</p>
+        </div>
+        <div class="card">
+          <h3>High-frequency detection</h3>
+          <p>Identifies short-term motion and momentum behavior to improve timing precision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="markets">
+    <div class="container">
+      <h2 class="section-title">Markets covered</h2>
+      <p class="section-sub">Focused on high-interest symbols with strong trading demand and high visibility.</p>
+      <div class="markets">
+        <div class="market-pill">BTC</div>
+        <div class="market-pill">ETH</div>
+        <div class="market-pill">XRP</div>
+        <div class="market-pill">Volatility Index</div>
+        <div class="market-pill">Synthetic Deriv</div>
+        <div class="market-pill">EUR/USD</div>
+      </div>
+
+      <div class="cinema-wrapper" id="sales-video">
+        <div class="cinema-glow"></div>
+        <div class="cinema-frame">
+          <iframe
+            id="salesYoutube"
+            src="https://www.youtube.com/embed/akbTljZAZl4?rel=0&modestbranding=1&playsinline=1&mute=1"
+            title="Ultimate AI Trading Engine Video"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="cinema-overlay">
+          <div class="cinema-badge">ULTIMATE CONVERSION MODE</div>
+          <div class="cinema-bottom">
+            <div class="cinema-copy">
+              <h3 class="cinema-title">Watch the engine in action</h3>
+              <p class="cinema-sub">Integrated directly below Markets Covered. Stable YouTube frame with premium sales overlay and instant play button.</p>
+            </div>
+            <button class="cinema-cta" type="button" onclick="playSalesVideo()">▶ Watch now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="update-block ultimate-conversion-block">
+        <div class="status-row">
+          <span class="status-pill">AI ENGINE LIVE</span>
+          <span class="status-pill">HIGH-PERFORMANCE SIGNALS</span>
+          <span class="status-pill">PREMIUM ACCESS</span>
+        </div>
+
+        <p class="update-text">
+          <span class="scan-line"></span>
+          Latest update and improvements to the highest-performing signals.<br>
+          Cutting-edge AI technology.<br>
+          In-depth research for the best and most accurate predictions.
+        </p>
+
+        <div class="conversion-grid">
+          <div class="conversion-card countdown-card">
+            <div class="conversion-label">Priority access window</div>
+            <div class="countdown" id="countdownTimer">
+              <div class="time-box"><strong id="cdHours">02</strong><span>Hours</span></div>
+              <div class="time-box"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
+              <div class="time-box"><strong id="cdSeconds">00</strong><span>Seconds</span></div>
+            </div>
+            <div class="conversion-note">Fast access to the latest AI signal improvements.</div>
+          </div>
+
+          <div class="conversion-card progress-card">
+            <div class="conversion-label">Signal optimization</div>
+            <div class="meter-head">
+              <span>Optimization cycle running</span>
+              <strong id="meterValue">94%</strong>
+            </div>
+            <div class="meter-track"><span class="meter-fill" id="meterFill"></span></div>
+            <div class="conversion-note">Latest update and improvements loaded into the current NEXUS M5 access page.</div>
+          </div>
+        </div>
+
+        <div class="cta-stack">
+          <a class="update-btn" href="https://samnews974.github.io/NEXUS-M5/" target="_blank" rel="noopener noreferrer">⚡ Access NEXUS M5</a>
+          <div class="micro-proof">Direct access button available below the YouTube video for faster entry.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="offer">
+    <div class="container">
+      <h2 class="section-title">Exclusive Offer</h2>
+      <p class="section-sub">Private access. Limited availability. Early access pricing may change later.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>What you get</h3>
+          <p>Full access to the system, all active core features, ongoing improvements, and a private license access code.</p>
+        </div>
+        <div class="card">
+          <h3>Why now</h3>
+          <p>Current entry price is intentionally low for early users. This creates a stronger launch incentive and a faster buying decision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="payment">
+    <div class="container">
+      <h2 class="section-title"><span class="gold">Cryptocurrency</span> payment method</h2>
+      <p class="section-sub">Send your payment using one of the methods below, then contact us to receive your access code.</p>
+
+      <div class="payment-grid">
+        <div class="payment-item">
+          <span class="payment-label">USDC ERC20</span>
+          <div class="payment-value">0x65A9E0ce93050680eA215f3EE1b03767f82048C0</div>
+        </div>
+
+        <div class="payment-item">
+          <span class="payment-label">ETH</span>
+          <div class="payment-value">0x65A9E0ce93050680eA215f3EE1b03767f82048C0</div>
+        </div>
+
+        <div class="payment-item">
+          <span class="payment-label">BTC</span>
+          <div class="payment-value">bc1q56fk8lzkk6s9043fpj78evj3xg2ngcfyhjp9hn</div>
+        </div>
+
+        <div class="payment-item">
+          <span class="payment-label">USDT ERC20</span>
+          <div class="payment-value">0x65A9E0ce93050680eA215f3EE1b03767f82048C0</div>
+        </div>
+
+        <div class="payment-item">
+          <span class="payment-label">USDT TRC20</span>
+          <div class="payment-value">TKntAPZfjBM6UUnqrSsouBqBrqF466qnhr</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact us to receive your access code</h2>
+      <p class="section-sub">After payment, send your proof and contact details to receive your access code.</p>
+
+      <div class="contact-row">
+        <div class="contact-box">
+          <strong>Telegram</strong>
+          <div>@TraderProWorld</div>
+        </div>
+
+        <div class="contact-box contact-box-god">
+          <strong>Email</strong>
+          <div class="email-pro-wrap">
+  <a href="mailto:worldvision@orange.fr" class="email-link email-link-god" id="emailLink">worldvision@orange.fr</a>
+  <div class="email-actions-god">
+    <button type="button" class="copy-email-btn copy-email-btn-god" id="copyEmailBtn">Copy email</button>
+    <a href="mailto:worldvision@orange.fr?subject=Ultimate%20AI%20Trading%20Engine" class="mail-open-btn">Open mail</a>
+  </div>
+  <div class="email-note-god">Direct contact for access code delivery and support.</div>
+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="sticky-cta" id="stickyCta">
+    <div class="sticky-copy">
+      <strong>NEXUS M5 • Latest AI improvements</strong>
+      <span>Direct access to the updated signal page.</span>
+    </div>
+    <a class="sticky-btn" href="https://samnews974.github.io/NEXUS-M5/" target="_blank" rel="noopener noreferrer">Open NEXUS M5</a>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div>Ultimate AI Trading Engine • Private access page</div>
+    </div>
+  </footer>
+
+  <div class="contact-toast" id="contactToast">Email copied successfully</div>
+
+    
+  <script>
+    const audio = document.getElementById("bgAudio");
+    const soundBtn = document.getElementById("soundBtn");
+    const audioStatus = document.getElementById("audioStatus");
+    let soundEnabled = false;
+
+    function playSalesVideo() {
+      const iframe = document.getElementById("salesYoutube");
+      if (!iframe) return;
+      iframe.src = "https://www.youtube.com/embed/akbTljZAZl4?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1";
+    }
+
+    async function enableSound() {
+      try {
+        await audio.play();
+        soundEnabled = true;
+        soundBtn.textContent = "Sound Enabled";
+        audioStatus.textContent = "Background music activated.";
+      } catch (error) {
+        audioStatus.textContent = "Your browser blocked autoplay with sound. Click again to enable music.";
+      }
+    }
+
+    soundBtn?.addEventListener("click", enableSound);
+
+    const countdownTarget = Date.now() + (2 * 60 * 60 * 1000);
+    function updateCountdown() {
+      const diff = Math.max(0, countdownTarget - Date.now());
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      const h = document.getElementById("cdHours");
+      const m = document.getElementById("cdMinutes");
+      const s = document.getElementById("cdSeconds");
+      if (h) h.textContent = hours;
+      if (m) m.textContent = minutes;
+      if (s) s.textContent = seconds;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const meterFill = document.getElementById("meterFill");
+    const meterValue = document.getElementById("meterValue");
+    let meterDirection = 1;
+    let meterCurrent = 94;
+    setInterval(() => {
+      meterCurrent += meterDirection;
+      if (meterCurrent >= 98) meterDirection = -1;
+      if (meterCurrent <= 93) meterDirection = 1;
+      if (meterFill) meterFill.style.width = meterCurrent + "%";
+      if (meterValue) meterValue.textContent = meterCurrent + "%";
+    }, 1400);
+  </script>
+
+  <script>
+    (function(){
+      const copyBtn = document.getElementById('copyEmailBtn');
+      const emailLink = document.getElementById('emailLinkPro');
+      if(copyBtn && emailLink){
+        copyBtn.addEventListener('click', async () => {
+          const email = (emailLink.textContent || '').trim();
+          try{
+            await navigator.clipboard.writeText(email);
+            const old = copyBtn.textContent;
+            copyBtn.textContent = 'Copied';
+            setTimeout(()=>copyBtn.textContent = old, 1600);
+          }catch(e){
+            copyBtn.textContent = 'Copy failed';
+            setTimeout(()=>copyBtn.textContent = 'Copy email', 1600);
+          }
+        });
+      }
+    })();
+  
+    const copyBtn = document.getElementById('copyEmailBtn');
+    const emailLink = document.getElementById('emailLink');
+    const toast = document.getElementById('contactToast');
+    if(copyBtn && emailLink){
+      copyBtn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(emailLink.textContent.trim());
+          copyBtn.textContent = 'Copied';
+          if(toast){
+            toast.textContent = 'Email copied successfully';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1800);
+          }
+          setTimeout(() => copyBtn.textContent = 'Copy email', 1600);
+        }catch(e){
+          copyBtn.textContent = 'Copy failed';
+          if(toast){
+            toast.textContent = 'Copy failed';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1800);
+          }
+          setTimeout(() => copyBtn.textContent = 'Copy email', 1600);
+        }
+      });
+    }
+</script>
+
+</body>
+</html>
